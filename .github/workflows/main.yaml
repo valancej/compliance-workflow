@@ -27,6 +27,7 @@ jobs:
       run: |
         docker build . \
           --tag="localbuild/example-node-web-app:latest" \
+          --tag="ghcr.io/$GITHUB_REPOSITORY:latest" \
           --label="org.opencontainers.image.created=$(date +%Y-%m-%d)" \
           --label="org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
           --label="org.opencontainers.image.revision=$GITHUB_SHA"
@@ -51,8 +52,6 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GHCR_TOKEN }}
 
-    - name: Retag and push image to GHCR
+    - name: Push image to GHCR
       id: ghcr_push
-      run: |
-        docker tag localbuild/example-node-web-app:latest ghcr.io/$GITHUB_REPOSITORY:latest && \ 
-        docker push ghcr.io/$GITHUB_REPOSITORY:latest
+      run: docker push ghcr.io/${{ GITHUB_REPOSITORY }}:latest
