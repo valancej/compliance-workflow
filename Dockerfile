@@ -1,9 +1,12 @@
-FROM registry.access.redhat.com/ubi8/python-36
+FROM node:12
 
-COPY . /app
-WORKDIR /app
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /usr/src/app
 
-ENTRYPOINT ["python"] 
-CMD ["app.py"]
+COPY package*.json ./
 
+RUN npm install
+
+COPY . .
+
+EXPOSE 8080
+CMD [ "node", "server.js" ]
