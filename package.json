@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "express": "^4.16.1",
-    "bestzip": "2.1.6"
+    "bestzip": "2.1.7"
   }
 }

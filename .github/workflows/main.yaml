@@ -12,8 +12,9 @@ jobs:
       uses: anchore/scan-action@v2
       with:
         path: "./"
-        fail-build: false
+        fail-build: true
         acs-report-enable: true
+        severity-cutoff: critical
     - name: upload Anchore scan SARIF report
       uses: github/codeql-action/upload-sarif@v1
       with:
