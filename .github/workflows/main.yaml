@@ -1,7 +1,7 @@
-name: Scan current directory CI
+name: Container Image CI
 on: [push]
 jobs:
-  anchore_job:
+  build:
     runs-on: ubuntu-latest
     name: Anchore scan directory
     steps:
@@ -9,7 +9,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Scan current project directory with Grype
-      id: scan
+      id: scan_directory
       uses: anchore/scan-action@v2
       with:
         path: "./"
@@ -20,14 +20,16 @@ jobs:
     - name: upload Anchore scan SARIF report
       uses: github/codeql-action/upload-sarif@v1
       with:
-        sarif_file: ${{ steps.scan.outputs.sarif }}
+        sarif_file: ${{ steps.scan_directory.outputs.sarif }}
     
     - name: Build image from Dockerfile
-      id: image_build
-      uses: docker/build-push-action@v2
-      with:
-        push: false
-        tags: valancej/example-node-web-app:latest
+      id: build_image
+      run: docker build -t localbuild/example-node-web-app:latest .
     
-    - name: Image digest
-      run: echo ${{ steps.image_build.outputs.digest }}
+    - name: Scan built image with Grype
+      id: scan_image
+      uses: anchore/scan-action@v2
+      with:
+        image: "localbuild/example-node-web-app:latest"
+        fail-build: true
+        severity-cutoff: critical
