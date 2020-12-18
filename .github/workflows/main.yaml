@@ -42,3 +42,17 @@ jobs:
         image: "localbuild/example-node-web-app:latest"
         fail-build: false
         severity-cutoff: critical
+
+    - name: Login to GitHub Container Registry
+      id: ghcr_login
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    - name: Retag and push image to GHCR
+      id: ghcr_push
+      run: |
+        docker tag localbuild/example-node-web-app:latest ghcr.io/$GITHUB_REPOSITORY:latest && \ 
+        docker push ghcr.io/$GITHUB_REPOSITORY:latest
