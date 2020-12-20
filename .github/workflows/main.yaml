@@ -89,18 +89,7 @@ jobs:
 
     - name: Commit files
       run: |
-        git config --local user.email "valancejeremy@gmail.com"
         git config --local user.name "valancej"
-        git remote set-url origin https://x-access-token:${{ secrets.REPO_PAT }}@github.com/valancej/compliance-deployment
-        git status
         git add .
         git commit -m "Add changes"
-        git remote -v
-        git status
         git push
-  
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.REPO_PAT }}
-        repository: valancej/compliance-deployment
