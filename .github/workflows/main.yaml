@@ -86,18 +86,13 @@ jobs:
         cat kustomization.yaml
         kustomize build
 
-    - name: Setup Git
-      uses: actions/checkout@v2
-      with:
-        repository: 'valancej/compliance-deployment'
-        token: ${{ secrets.REPO_PAT }}
+    - name: Commit files
       run: |
+        git config --local user.email "valancejeremy@gmail.com"
         git config --local user.name "valancej"
-        git remote set-url origin https://x-access-token:${{ secrets.REPO_PAT }}@github.com/valancej/compliance-deployment
-        git remote -v
-        git status
-        git add .
-        git commit -m "Bump image tag"
-        git status
-        git push
-      
+        git commit -m "Add changes" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.PAT_TOKEN }}
+        branch: valancej/compliance-deployment
