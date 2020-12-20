@@ -69,7 +69,7 @@ jobs:
     - name: Check out deployment code
       uses: actions/checkout@v2
       with:
-        repository: 'https://github.com/valancej/compliance-deployment.git'
+        repository: 'valancej/compliance-deployment'
 
     - name: Setup Kustomize
       uses: imranismail/setup-kustomize@v1
