@@ -61,7 +61,7 @@ jobs:
       id: ghcr_push
       run: |
         docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
-        docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:{$GITHUB_SHA}"
+        docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
 
   deploy:
     name: Deploy
