@@ -86,11 +86,13 @@ jobs:
         cat kustomization.yaml
         kustomize build
 
-    - name: Push changes
+    - name: Setup Git
       uses: actions/checkout@v2
       with:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
+    
+    - name: Push changes 
       run: |
         git config --local user.name "valancej"
         git add .
