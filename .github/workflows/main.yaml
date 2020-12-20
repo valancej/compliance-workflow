@@ -91,11 +91,10 @@ jobs:
       with:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
-    
-    - name: Push changes 
       run: |
         git config --local user.name "valancej"
         git remote set-url origin https://x-access-token:${{ secrets.REPO_PAT }}@github.com/valancej/compliance-deployment
+        git remote -v
         git status
         git add .
         git commit -m "Bump image tag"
