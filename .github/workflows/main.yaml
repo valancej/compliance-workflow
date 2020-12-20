@@ -4,6 +4,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Compliance Build Workflow
+    env:
+      GHCR: ghcr.io
+      IMAGE_NAME: example-node-webapp
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -26,21 +29,22 @@ jobs:
       id: build_image
       run: |
         docker build . \
-          --tag="localbuild/example-node-web-app:latest" \
-          --tag="ghcr.io/$GITHUB_REPOSITORY:latest" \
+          --tag="localbuild/$IMAGE_NAME:latest" \
+          --tag="$GHCR/$GITHUB_ACTOR/$IMAGE_NAME:latest" \
           --label="org.opencontainers.image.created=$(date +%Y-%m-%d)" \
           --label="org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
           --label="org.opencontainers.image.revision=$GITHUB_SHA"
+          --label="anchore.stig.profile1=redhat-enterprise-linux-7-stig-baseline"
     
     - name: Inspect image 
       id: inspect_image
-      run: docker inspect localbuild/example-node-web-app:latest
+      run: docker inspect localbuild/$IMAGE_NAME:latest
 
     - name: Scan built image with Grype
       id: scan_image
       uses: anchore/scan-action@v2
       with:
-        image: "localbuild/example-node-web-app:latest"
+        image: "localbuild/$IMAGE_NAME:latest"
         fail-build: false
         severity-cutoff: critical
 
@@ -48,10 +52,10 @@ jobs:
       id: ghcr_login
       uses: docker/login-action@v1
       with:
-        registry: ghcr.io
+        registry: $GHCR
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GHCR_TOKEN }}
 
-    - name: Push image to GHCR
+    - name: Push image to GitHub Container Registry
       id: ghcr_push
-      run: docker push "ghcr.io/${GITHUB_REPOSITORY}:latest"
+      run: docker push "${GHCR}/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
