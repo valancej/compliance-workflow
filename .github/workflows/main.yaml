@@ -86,13 +86,14 @@ jobs:
         cat kustomization.yaml
         kustomize build
 
-    - name: Commit files
-      run: |
-        git config --local user.name "valancej"
-        git commit -am "Bump image tag"
-
     - name: Push changes
       uses: actions/checkout@v2
       with:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
+      run: |
+        git config --local user.name "valancej"
+        git add .
+        git commit -am "Bump image tag"
+        git push
+      
