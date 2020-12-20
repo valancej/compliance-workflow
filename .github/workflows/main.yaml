@@ -2,8 +2,8 @@ name: Container Image CI
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
     name: Compliance Build Workflow
+    runs-on: ubuntu-latest
     env:
       GHCR: ghcr.io
       IMAGE_NAME: example-node-webapp
@@ -59,3 +59,25 @@ jobs:
     - name: Push image to GitHub Container Registry
       id: ghcr_push
       run: docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Check out deployment code
+      uses: actions/checkout@v2
+      repository: 'https://github.com/valancej/compliance-workflow.git'
+
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: "3.6.1"
+
+    - name: Update Kubernetes resources
+      run: |
+        cd kustomize/base \
+        kustomize edit set image example-webapp=ghcr.io/jvalance/example-webapp:latest
+        cat kustomization.yaml \
+        kustomize build
