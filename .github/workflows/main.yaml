@@ -68,7 +68,8 @@ jobs:
     steps:
     - name: Check out deployment code
       uses: actions/checkout@v2
-      repository: 'https://github.com/valancej/compliance-workflow.git'
+      with:
+        repository: 'https://github.com/valancej/compliance-deployment.git'
 
     - name: Setup Kustomize
       uses: imranismail/setup-kustomize@v1
