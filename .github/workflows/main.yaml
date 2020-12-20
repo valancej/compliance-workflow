@@ -90,10 +90,9 @@ jobs:
       run: |
         git config --local user.name "valancej"
         git commit -am "Bump image tag"
-        git push
 
     - name: Push changes
       uses: actions/checkout@v2
       with:
         repository: 'valancej/compliance-deployment'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.REPO_PAT }}
