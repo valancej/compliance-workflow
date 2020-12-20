@@ -90,7 +90,11 @@ jobs:
       run: |
         git config --local user.email "valancejeremy@gmail.com"
         git config --local user.name "valancej"
-        git commit -m "Add changes" -a
+        git add .
+        git commit -m "Add changes"
+        git remote -v
+        git status
+        git push
   
     - name: Push changes
       uses: ad-m/github-push-action@master
