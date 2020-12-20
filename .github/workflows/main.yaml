@@ -52,10 +52,10 @@ jobs:
       id: ghcr_login
       uses: docker/login-action@v1
       with:
-        registry: ${{ GHCR }}
+        registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GHCR_TOKEN }}
 
     - name: Push image to GitHub Container Registry
       id: ghcr_push
-      run: docker push "${GHCR}/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
+      run: docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
