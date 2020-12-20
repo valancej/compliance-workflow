@@ -52,7 +52,7 @@ jobs:
       id: ghcr_login
       uses: docker/login-action@v1
       with:
-        registry: $GHCR
+        registry: ${{ GHCR }}
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GHCR_TOKEN }}
 
