@@ -78,7 +78,7 @@ jobs:
 
     - name: Update Kubernetes resources
       run: |
-        cd kustomize/base \
+        cd kustomize/base
         kustomize edit set image example-webapp=ghcr.io/jvalance/example-webapp:latest
-        cat kustomization.yaml \
+        cat kustomization.yaml
         kustomize build
