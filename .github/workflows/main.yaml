@@ -44,7 +44,7 @@ jobs:
       id: scan_image
       uses: anchore/scan-action@v2
       with:
-        image: "localbuild/$IMAGE_NAME:latest"
+        image: "localbuild/example-node-webapp:latest"
         fail-build: false
         severity-cutoff: critical
 
