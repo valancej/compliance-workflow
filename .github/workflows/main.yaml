@@ -91,5 +91,5 @@ jobs:
       run: |
         git config --local user.name "valancej"
         git add .
-        git commit -m "Add changes"
+        git commit -m "Image bump"
         git push
