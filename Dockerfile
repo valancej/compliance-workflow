@@ -1,4 +1,6 @@
-FROM node:15.4.0-alpine3.12
+FROM registry.access.redhat.com/ubi8:8.3 
+
+RUN yum -y install nodejs
 
 WORKDIR /usr/src/app
 
