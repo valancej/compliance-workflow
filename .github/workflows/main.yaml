@@ -31,6 +31,7 @@ jobs:
         docker build . \
           --tag="localbuild/$IMAGE_NAME:latest" \
           --tag="$GHCR/$GITHUB_ACTOR/$IMAGE_NAME:latest" \
+          --tag="$GHCR/$GITHUB_ACTOR/$IMAGE_NAME:$GITHUB_SHA" \
           --label="org.opencontainers.image.created=$(date +%Y-%m-%d)" \
           --label="org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
           --label="org.opencontainers.image.revision=$GITHUB_SHA" \
@@ -58,7 +59,9 @@ jobs:
 
     - name: Push image to GitHub Container Registry
       id: ghcr_push
-      run: docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
+      run: |
+        docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
+        docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:{$GITHUB_SHA}"
 
   deploy:
     name: Deploy
@@ -79,6 +82,18 @@ jobs:
     - name: Update Kubernetes resources
       run: |
         cd kustomize/base
-        kustomize edit set image example-webapp=ghcr.io/jvalance/example-webapp:latest
+        kustomize edit set image example-webapp=ghcr.io/jvalance/example-webapp:$GITHUB_SHA
         cat kustomization.yaml
         kustomize build
+
+    - name: Commit files
+      run: |
+        git config --local user.name "valancej"
+        git commit -am "Bump image tag"
+        git push
+
+    - name: Push changes
+      uses: actions/checkout@v2
+      with:
+        repository: 'valancej/compliance-deployment'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
