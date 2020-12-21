@@ -28,7 +28,7 @@ jobs:
     - name: Build image from Dockerfile
       id: build_image
       run: |
-        chmod +x scripts/build-image.sh
+        chmod +x scripts/*
         ./scripts/metadata.py 
         ./scripts/build-image.sh
     
