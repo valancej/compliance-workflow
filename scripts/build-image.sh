@@ -6,7 +6,8 @@ set -Eeuo pipefail
 
 mkdir -p artifacts
 
-python metadata.py
+# Run python script to generate metadata
+python scripts/metadata.py
 
 # Convert labels from the compliance manifest into command line args for build
 echo "Converting labels from hardening manifest into command line args"
