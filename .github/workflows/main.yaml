@@ -84,7 +84,7 @@ jobs:
       run: |
         cd kustomize/base
         kustomize edit set image example-webapp=ghcr.io/valancej/example-webapp:latest
-        kustomize edit add annotation gitCommit:$GITHUB_SHA
+        kustomize edit add annotation gitCommit:$GITHUB_SHA --force
         cat kustomization.yaml
         kustomize build
 
