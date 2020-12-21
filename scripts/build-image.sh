@@ -1,13 +1,14 @@
 #!/bin/bash
 
 set -Eeuo pipefail
-
 # Convert labels from the compliance manifest into command line args for build
-echo "Converting labels from hardening manifest into command line args"
-$image_labels=while read label; do
-  echo "--label=$label"
-done < artifacts/image-labels.env
 
+echo "Converting labels from hardening manifest into command line args"
+image_labels=$(while IFS= read -r label; do
+  echo "--label=$label"
+done < "artifacts/image-labels.env")
+
+IFS=$'\n'
 # Builds image from Dockerfile
 
 docker build . \
