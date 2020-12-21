@@ -83,7 +83,7 @@ jobs:
     - name: Update Kubernetes resources
       run: |
         cd kustomize/base
-        kustomize edit set image example-webapp=ghcr.io/valancej/example-node-webapp:latest
+        kustomize edit set image example-webapp=ghcr.io/valancej/example-node-webapp:$GITHUB_SHA
         kustomize edit add annotation gitCommit:$GITHUB_SHA --force
         cat kustomization.yaml
         kustomize build
