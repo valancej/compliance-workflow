@@ -2,13 +2,6 @@
 
 set -Eeuo pipefail
 
-# Create artifacts directory if not exists
-
-mkdir -p artifacts
-
-# Run python script to generate metadata
-python scripts/metadata.py
-
 # Convert labels from the compliance manifest into command line args for build
 echo "Converting labels from hardening manifest into command line args"
 $image_labels=while read label; do

@@ -29,6 +29,8 @@ jobs:
       id: build_image
       run: |
         chmod +x scripts/*
+        mkdir -p artifacts
+        ./scripts/metadata.py
         ./scripts/build-image.sh
     
     - name: Inspect image 
