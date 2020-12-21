@@ -1,3 +1,17 @@
-# Compliance workflow app
+# Example build and deploy workflow 
 
-Repository for build workflow for sample webapp
+## Build job
+
+1. Scan directory with Grype
+2. Build container image
+3. Scan built image with Grype
+4. Push image to GHCR
+
+## Deploy job
+
+[Deployment repo](https://github.com/valancej/compliance-deployment)
+
+**Requires build job**
+
+1. Update deployment repo with latest image and other deployment information
+2. Argo syncs updated manifests from deployment repo

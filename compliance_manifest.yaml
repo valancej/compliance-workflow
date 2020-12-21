@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+
+# The name of the git repository. Ex. valancej/compliance-workflow
+
+name: valancej/compliance-workflow
+
+# List of tags to push to container registry
+# Images will also be tagged with git sha
+tags:
+- "latest"
+
+# Image labels which will be added to the image during build time
+# Image will also be labeled with git sha
+#
+# NOTE: STIG profiles will be applied based on the labels supplied to the image. 
+# Ex. To apply "httpd_2.4x_server" STIG label supply the label: anchore.stig.profile1: "httpd_2.4x_server"
+# To apply multiple STIG profiles, increment the label: "anchore.stig.profile1", "anchore.stig.profile2", etc.
+labels:
+  anchore.stig.profile1: "redhat-enterprise-linux-7-stig-baseline"
+  anchore.stig.profile2: "poc_profile"
+  org.opencontainers.image.title: "webapp"
+  org.opencontainers.image.description: "Example node webapp with stig profiles"
