@@ -17,13 +17,14 @@ jobs:
       with:
         path: "./"
         fail-build: true
-        acs-report-enable: true
         severity-cutoff: critical
 
-    - name: upload Anchore scan SARIF report
-      uses: github/codeql-action/upload-sarif@v1
+    - name: upload grype directory scan report
+      uses: actions/upload-artifact@v2
       with:
-        sarif_file: ${{ steps.scan_directory.outputs.sarif }}
+        name: grype-directory-vuln-report
+        path: ${{ steps.scan_directory.outputs.vulnerabilities }}
+        retention-days: 1
     
     - name: Build image from Dockerfile
       id: build_image
@@ -32,10 +33,6 @@ jobs:
         mkdir -p artifacts
         ./scripts/metadata.py
         ./scripts/build-image.sh
-    
-    - name: Inspect image 
-      id: inspect_image
-      run: docker inspect localbuild/$IMAGE_NAME:latest
 
     - name: Scan built image with Grype
       id: scan_image
@@ -44,6 +41,13 @@ jobs:
         image: "localbuild/example-node-webapp:latest"
         fail-build: false
         severity-cutoff: critical
+    
+    - name: upload grype image scan report
+      uses: actions/upload-artifact@v2
+      with:
+        name: grype-image-vuln-report
+        path: ${{ steps.scan_image.outputs.vulnerabilities }}
+        retention-days: 1
 
     - name: Login to GitHub Container Registry
       id: ghcr_login
@@ -66,17 +70,20 @@ jobs:
 
     steps:
     - name: Check out deployment code
+      id: checkout_deployment_repo
       uses: actions/checkout@v2
       with:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
 
     - name: Setup Kustomize
+      id: setup_kustomize
       uses: imranismail/setup-kustomize@v1
       with:
         kustomize-version: "3.6.1"
 
     - name: Update Kubernetes resources
+      id: update_k8s
       run: |
         cd kustomize/base
         kustomize edit set image example-webapp=ghcr.io/valancej/example-node-webapp:$GITHUB_SHA
@@ -85,6 +92,7 @@ jobs:
         kustomize build
 
     - name: Commit files
+      id: commit_changes
       run: |
         git config --local user.name "valancej"
         git add .
