@@ -6,10 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GHCR: ghcr.io
-      IMAGE_NAME: example-node-webapp
-      ANCHORE_URL: {{ secrets.ANCHORE_URL }}
-      ANCHORE_USER: {{ secrets.ANCHORE_USER }}
-      ANCHORE_PASSWORD: {{ secrets.ANCHORE_PASSWORD }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
