@@ -7,9 +7,20 @@ jobs:
     env:
       GHCR: ghcr.io
       IMAGE_NAME: example-node-webapp
+      ANCHORE_URL: {{ secrets.ANCHORE_URL }}
+      ANCHORE_USER: {{ secrets.ANCHORE_USER }}
+      ANCHORE_PASSWORD: {{ secrets.ANCHORE_PASSWORD }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Upload compliance manifest
+      id: upload_manifest
+      uses: actions/upload-artifact@
+      with:
+        name: compliance-manifest
+        path: compliance_manifest.yaml
+        retention-days: 1
 
     - name: Scan current project directory with Grype
       id: scan_directory
@@ -62,6 +73,14 @@ jobs:
       run: |
         docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
         docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
+    
+    # - name: Scan pushed image with Anchore Enterprise
+    #   id: anchore_enterprise_scan
+    #   run: |
+    #     pip install anchorecli
+    #     anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }}--u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image add "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
+    #     anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }}--u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image wait "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
+
 
   deploy:
     name: Deploy
@@ -76,6 +95,12 @@ jobs:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
 
+    - name: Download compliance manifest from build job
+      id: download_manifest
+      uses: actions/download-artifact@v2
+      with:
+        name: compliance-manifest
+
     - name: Setup Kustomize
       id: setup_kustomize
       uses: imranismail/setup-kustomize@v1
@@ -85,11 +110,10 @@ jobs:
     - name: Update Kubernetes resources
       id: update_k8s
       run: |
-        cd kustomize/base
-        kustomize edit set image example-webapp=ghcr.io/valancej/example-node-webapp:$GITHUB_SHA
-        kustomize edit add annotation gitCommit:$GITHUB_SHA --force
-        cat kustomization.yaml
-        kustomize build
+        chmod +x scripts/*
+        mkdir -p artifacts
+        ./scripts/k8s-metadata.py
+        ./scripts/update-k8s-resources.sh
 
     - name: Commit files
       id: commit_changes
