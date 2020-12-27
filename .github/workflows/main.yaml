@@ -77,7 +77,6 @@ jobs:
     #     anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }}--u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image add "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
     #     anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }}--u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image wait "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
 
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -118,3 +117,32 @@ jobs:
         git add .
         git commit -m "Image bump"
         git push
+
+  report:
+    name: Report
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+    - name: Check out report code
+      id: checkout_report_repo
+      uses: actions/checkout@v2
+      with:
+        repository: 'valancej/compliance-reports'
+        token: ${{ secrets.REPO_PAT }}
+    
+    - name: Create artifacts directory
+      run: mkdir -p artifacts
+    
+    - name: Download all artifacts
+      id: download_artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: artifacts
+    
+    - name: Display structure of downloaded artifacts
+      run: ls -R
+
+    # - name: Generate compliance report
+    #   id: generate_compliance_report
+    #   run: generate_reports.py
