@@ -1,14 +1,10 @@
 ---
-apiVersion: v1
-
 # The name of the git repository. Ex. valancej/compliance-workflow
 
 name: valancej/compliance-workflow
+imageName: ghcr.io/valancej/example-node-webapp
 
-# List of tags to push to container registry
 # Images will also be tagged with git sha
-tags:
-- "latest"
 
 # Image labels which will be added to the image during build time
 # Image will also be labeled with git sha

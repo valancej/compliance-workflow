@@ -118,6 +118,10 @@ jobs:
         git commit -m "Image bump"
         git push
 
+    - name: Build compliance manifest
+      id: build_compliance_manifest
+      run: ./scripts/compliance-manifest.py
+
   report:
     name: Report
     runs-on: ubuntu-latest
