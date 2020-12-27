@@ -14,7 +14,7 @@ jobs:
     - name: Upload compliance manifest
       uses: actions/upload-artifact@v2
       with:
-        name: compliance-manifest
+        name: compliance-manifest-yaml
         path: compliance_manifest.yaml
         retention-days: 1
 
@@ -94,7 +94,7 @@ jobs:
       id: download_manifest
       uses: actions/download-artifact@v2
       with:
-        name: compliance-manifest
+        name: compliance-manifest-yaml
 
     - name: Setup Kustomize
       id: setup_kustomize
@@ -121,6 +121,13 @@ jobs:
     - name: Build compliance manifest
       id: build_compliance_manifest
       run: ./scripts/compliance-manifest.py
+
+    - name: Upload compliance manifest
+      uses: actions/upload-artifact@v2
+      with:
+        name: compliance-manifest-json
+        path: artifacts/compliance_manifest.json
+        retention-days: 1
 
   report:
     name: Report
