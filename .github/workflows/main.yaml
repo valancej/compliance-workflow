@@ -126,7 +126,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: compliance-manifest-json
-        path: artifacts/compliance_manifest.json
+        path: artifacts/compliance-manifest.json
         retention-days: 1
 
   report:
