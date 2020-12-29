@@ -14,26 +14,24 @@ type ComplianceManifest struct {
 	Labels map[string]interface{} `yaml:"labels"`
 }
 
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
+}
+
 func main() {
 
-	complianceManifestPath := "compliance_manifest.yaml"
-
-	yamlFile, err := os.Open(complianceManifestPath)
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer yamlFile.Close()
-
-	complianceYaml, _ := ioutil.ReadAll(yamlFile)
+	complianceYaml, err := ioutil.ReadFile("compliance_manifest.yaml")
+	check(err)
 
 	var complianceManiest ComplianceManifest
 
 	err = yaml.Unmarshal([]byte(complianceYaml), &complianceManiest)
-	if err != nil {
-		fmt.Println(err)
-	}
+	check(err)
 
-	file, _ := os.Create("artifacts/image-labels.env")
+	file, err := os.Create("artifacts/image-labels.env")
+	check(err)
 
 	defer file.Close()
 
