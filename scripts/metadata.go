@@ -1,23 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"io/ioutil"
-	"gopkg.in/yaml.v2"
 	"bufio"
+	"fmt"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"os"
 )
 
 type ComplianceManifest struct {
-	Name string `yaml:"name"`
-	ImageName string `yaml:"imageName"`
-	Labels map[string]interface{} `yaml:"labels"`
+	Name      string                 `yaml:"name"`
+	ImageName string                 `yaml:"imageName"`
+	Labels    map[string]interface{} `yaml:"labels"`
 }
 
 func check(e error) {
-    if e != nil {
-        panic(e)
-    }
+	if e != nil {
+		panic(e)
+	}
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 	defer file.Close()
 
 	w := bufio.NewWriter(file)
- 
+
 	for key, value := range complianceManiest.Labels {
 		str := fmt.Sprint(value)
 		newstr := key + "=" + str + "\n"
