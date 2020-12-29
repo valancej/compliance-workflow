@@ -38,8 +38,7 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        go get gopkg.in/yaml.v2
-        go run ./scripts/metadata.go
+        ./scripts/metadata.py
         ./scripts/build-image.sh
 
     - name: Scan built image with Grype
