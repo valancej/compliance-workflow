@@ -38,7 +38,7 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        ./scripts/metadata.py
+        go run ./scripts/metadata.go
         ./scripts/build-image.sh
 
     - name: Scan built image with Grype
