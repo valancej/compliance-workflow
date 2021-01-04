@@ -8,10 +8,6 @@ jobs:
       GHCR: ghcr.io
       IMAGE_NAME: example-node-webapp
     steps:
-    - name: Steps context
-      env:
-        STEPS_CONTEXT: ${{ toJson(steps) }}
-      run: echo "$STEPS_CONTEXT"
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -37,12 +33,24 @@ jobs:
         name: grype-directory-vuln-report
         path: ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
         retention-days: 1
+
+    - name: run report on grype directory scan
+      id: compliance_report_directory_scan
+      run: |
+        chmod +x scripts/*
+        mkdir -p artifacts
+        ./scripts/build_manifest.py --stage directory --compliance cis
+    
+    - name: Upload compliance manifest for grype directory scan
+      uses: actions/upload-artifact@v2
+      with:
+        name: directory-compliance-manifest-json
+        path: artifacts/directory-compliance-manifest.json
+        retention-days: 1
     
     - name: Build image from Dockerfile
       id: build_image
       run: |
-        chmod +x scripts/*
-        mkdir -p artifacts
         ./scripts/image_labels.py
         ./scripts/build-image.sh
 
@@ -59,6 +67,17 @@ jobs:
       with:
         name: grype-image-vuln-report
         path: ${{ steps.scan_image_grype.outputs.vulnerabilities }}
+        retention-days: 1
+
+    - name: run report on grype image scan
+      id: compliance_report_image_scan
+      run: ./scripts/build_manifest.py --stage build --compliance cis
+
+    - name: Upload build manifest for grype directory scan
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-compliance-manifest-json
+        path: artifacts/build-compliance-manifest.json
         retention-days: 1
 
     - name: Login to GitHub Container Registry

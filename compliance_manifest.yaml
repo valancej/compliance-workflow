@@ -2,7 +2,7 @@
 # The name of the git repository. Ex. valancej/compliance-workflow
 
 name: valancej/compliance-workflow
-imageName: ghcr.io/valancej/example-node-webapp
+image_name: ghcr.io/valancej/example-node-webapp
 
 # Images will also be tagged with git sha
 
@@ -17,3 +17,4 @@ labels:
   anchore.stig.profile2: "poc_profile"
   org.opencontainers.image.title: "webapp"
   org.opencontainers.image.description: "Example node webapp with stig profiles"
+
