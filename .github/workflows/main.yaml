@@ -7,7 +7,12 @@ jobs:
     env:
       GHCR: ghcr.io
       IMAGE_NAME: example-node-webapp
+      STEPS_CONTEXT: ${{ toJson(steps) }}
     steps:
+    
+    - name: Steps context
+      run: echo "$STEPS_CONTEXT"
+
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -19,7 +24,7 @@ jobs:
         retention-days: 1
 
     - name: Scan current project directory with Grype
-      id: scan_directory
+      id: scan_directory_grype
       uses: anchore/scan-action@v2
       with:
         path: "./"
@@ -30,7 +35,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: grype-directory-vuln-report
-        path: ${{ steps.scan_directory.outputs.vulnerabilities }}
+        path: ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
         retention-days: 1
     
     - name: Build image from Dockerfile
@@ -38,11 +43,11 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        ./scripts/metadata.py
+        ./scripts/image_labels.py
         ./scripts/build-image.sh
 
     - name: Scan built image with Grype
-      id: scan_image
+      id: scan_image_grype
       uses: anchore/scan-action@v2
       with:
         image: "localbuild/example-node-webapp:latest"
@@ -53,7 +58,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: grype-image-vuln-report
-        path: ${{ steps.scan_image.outputs.vulnerabilities }}
+        path: ${{ steps.scan_image_grype.outputs.vulnerabilities }}
         retention-days: 1
 
     - name: Login to GitHub Container Registry
