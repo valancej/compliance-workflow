@@ -73,7 +73,7 @@ jobs:
       id: compliance_report_image_scan
       run: ./scripts/build_manifest.py --stage build --compliance cis
 
-    - name: Upload build manifest for grype directory scan
+    - name: Upload build manifest for grype image scan
       uses: actions/upload-artifact@v2
       with:
         name: build-compliance-manifest-json
@@ -143,13 +143,13 @@ jobs:
         git push
 
     - name: Build compliance manifest
-      id: build_compliance_manifest
+      id: compliance_report_deploy
       run: ./scripts/build_manifest.py --stage deploy --compliance cis
 
     - name: Upload compliance manifest
       uses: actions/upload-artifact@v2
       with:
-        name: compliance-manifest-json
+        name: deploy-compliance-manifest-json
         path: artifacts/deploy-compliance-manifest.json
         retention-days: 1
 
