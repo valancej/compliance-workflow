@@ -99,6 +99,7 @@ jobs:
       run: |
         pip install wheel
         pip install anchorecli
+        export PATH="$HOME/.local/bin/:$PATH"
         anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image add "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
         anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image wait "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
         anchore-cli --json --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} evaluate check "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}" --detail > artifacts/anchore-compliance-report-detail.json
