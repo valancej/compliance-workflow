@@ -7,9 +7,9 @@ jobs:
     env:
       GHCR: ghcr.io
       IMAGE_NAME: example-node-webapp
-      STEPS_CONTEXT: ${{ toJson(steps) }}
     steps:
-    
+      env:
+        STEPS_CONTEXT: ${{ toJson(steps) }}
     - name: Steps context
       run: echo "$STEPS_CONTEXT"
 
