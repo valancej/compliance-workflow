@@ -131,7 +131,7 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        ./scripts/k8s-metadata.py
+        ./scripts/k8s_metadata.py
         ./scripts/update-k8s-resources.sh
 
     - name: Commit files
@@ -144,13 +144,13 @@ jobs:
 
     - name: Build compliance manifest
       id: build_compliance_manifest
-      run: ./scripts/compliance-manifest.py
+      run: ./scripts/build_manifest.py --stage deploy --compliance cis
 
     - name: Upload compliance manifest
       uses: actions/upload-artifact@v2
       with:
         name: compliance-manifest-json
-        path: artifacts/compliance-manifest.json
+        path: artifacts/deploy-compliance-manifest.json
         retention-days: 1
 
   report:
