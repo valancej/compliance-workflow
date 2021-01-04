@@ -97,6 +97,7 @@ jobs:
     - name: Scan pushed image with Anchore Enterprise
       id: anchore_enterprise_scan
       run: |
+        pip install wheel
         pip install anchorecli
         anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image add "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
         anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image wait "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
