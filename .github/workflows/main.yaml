@@ -135,11 +135,11 @@ jobs:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
 
-    - name: Download compliance report from build job
+    - name: Download compliance manifest from build job
       id: download_report
       uses: actions/download-artifact@v2
       with:
-        name: compliance-report-yaml
+        name: compliance-manifest-yaml
 
     - name: Setup Kustomize
       id: setup_kustomize
