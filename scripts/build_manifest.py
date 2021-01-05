@@ -17,6 +17,7 @@ from pathlib import Path
 # - vuln / compliance information from tool used (Grype, Anchore Enterprise, etc.)
 # - metadata (timestamp, git sha, image name, etc.)
 
+###### Setup command line parser
 def setup_parser():
     parser = argparse.ArgumentParser(description="Tool for generating compliance reports per CI/CD stage")
     parser.add_argument('-s', '--stage', default='none', help='Pipeline step/stage name. ex. directory, image, registry, deploy')
@@ -25,28 +26,7 @@ def setup_parser():
 
     return parser
 
-def main(arg_parser):
-
-    # Load compliance manifest yaml
-    compliance_manifest_yaml_path = Path("compliance_manifest.yaml")
-    if compliance_manifest_yaml_path.exists():
-        with open("compliance_manifest.yaml", 'r') as stream:
-            try:
-                content = yaml.safe_load(stream)
-            except yaml.YAMLError as exc:
-                print(exc)
-    else:
-        print("Could not find hardening manifest file in repository root directory")
-
-    # Process manifest from yaml
-    parser = arg_parser
-    args = parser.parse_args()
-    stage = args.stage
-    compliance_standard = args.compliance
-    input_file = args.file
-
-    process_manifest(content, stage, compliance_standard, input_file)
-
+###### Loads a json input file from a security tool such as Grype or Anchore
 def process_input_results_file(input_file):
     # Load results file from tool into dict
     input_file_path = Path(input_file)
@@ -57,6 +37,7 @@ def process_input_results_file(input_file):
     else:
         print("Could not find input file")
 
+###### Processes YAML and builds new report output
 def process_manifest(content, stage, compliance_standard, input_file):
    
     results_dict = process_input_results_file(input_file)
@@ -81,7 +62,6 @@ def process_manifest(content, stage, compliance_standard, input_file):
        compliance_checks["compliance_sections"] = {
            '4.4': {
                'description': 'Images should be scanned frequently for any vulnerabilities',
-               'tool': 'Grype scans directory for vulnerabilities' 
            }
         }
        
@@ -89,12 +69,11 @@ def process_manifest(content, stage, compliance_standard, input_file):
     
     elif stage == 'build':
         print('build stage found')
-        
+        # Could also be anchore enterprise scan
         compliance_checks["tool"] = 'Grype'
         compliance_checks["compliance_sections"] = {
             '4.4': {
                 'description': 'Images should be scanned frequently for any vulnerabilities',
-                'tool': 'Grype scans image for vulnerabilities' 
             }
         }
         manifest_content.update(compliance_checks)
@@ -146,6 +125,28 @@ def process_manifest(content, stage, compliance_standard, input_file):
 
     with open("artifacts/"+ stage + "-compliance-manifest.json", "w") as file:
        json.dump(manifest_content, file)
+
+def main(arg_parser):
+
+    # Load compliance manifest yaml
+    compliance_manifest_yaml_path = Path("compliance_manifest.yaml")
+    if compliance_manifest_yaml_path.exists():
+        with open(compliance_manifest_yaml_path, 'r') as stream:
+            try:
+                content = yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+    else:
+        print("Could not find hardening manifest file in repository root directory")
+
+    parser = arg_parser
+    args = parser.parse_args()
+    stage = args.stage
+    compliance_standard = args.compliance
+    input_file = args.file
+
+    # Process manifest from yaml
+    process_manifest(content, stage, compliance_standard, input_file)
     
 if __name__ == "__main__":
     try:
