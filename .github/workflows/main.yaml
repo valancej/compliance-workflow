@@ -39,7 +39,7 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        ./scripts/build_manifest.py --stage directory --compliance cis --file anchore-reports/vulnerabilities.json
+        ./scripts/build_manifest.py --stage directory --compliance cis --file ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
     
     - name: Upload compliance manifest for grype directory scan
       uses: actions/upload-artifact@v2
