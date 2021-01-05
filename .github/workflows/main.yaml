@@ -154,21 +154,16 @@ jobs:
         mkdir -p artifacts
         ./scripts/k8s_metadata.py
         ./scripts/update-k8s-resources.sh
-        
-    - name: run kube bench    
-      id: kube_bench
-      uses: ianbelcher/eks-kubectl-action@master
-      with:
+    
+    - name: create kube bench report from logs
+      env:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_region: ${{ secrets.AWS_REGION }}
         cluster_name: ${{ secrets.CLUSTER_NAME }}
-        args: apply -f kustomize/base/tools/job-eks.yaml
-    
-    - name: create kube bench report from logs
       run: |
-        POD=$(kubectl get pod -l job-name=kube-bench -o jsonpath="{.items[0].metadata.name}")
-        kubectl logs $POD > kube-bench-report.json
+        pip install awscli
+        ./scripts/kube-bench.sh
 
     - name: Commit files
       id: commit_changes
