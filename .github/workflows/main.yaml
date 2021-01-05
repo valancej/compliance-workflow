@@ -161,7 +161,7 @@ jobs:
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_region: ${{ secrets.AWS_REGION }}
         cluster_name: ${{ secrets.CLUSTER_NAME }}
-        test_var: ${{ secrets.TEST_VAR }}
+        TEST_VAR: ${{ secrets.TEST_VAR }}
       run: |
         echo "$TEST_VAR"
         pip install wheel
