@@ -51,8 +51,8 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
     report_content["stage"] = stage
     report_content["stage_number"] = stage_number
     report_content["stage_timestamp"] = current_time.strftime("%c")
-    #report_content["git_sha"] = git_sha
-    #report_content["full_image_tag"] = content["image_name"] + ":" + git_sha
+    report_content["git_sha"] = git_sha
+    report_content["full_image_tag"] = content["image_name"] + ":" + git_sha
     report_content["type"] = 'compliance_check'
     report_content["results"] = results_dict
 
