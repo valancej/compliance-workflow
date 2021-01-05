@@ -163,6 +163,7 @@ jobs:
         cluster_name: ${{ secrets.CLUSTER_NAME }}
         test_var: ${{ secrets.TEST_VAR }}
       run: |
+        echo "$TEST_VAR"
         pip install wheel
         pip install awscli
         ./scripts/kube-bench.sh
