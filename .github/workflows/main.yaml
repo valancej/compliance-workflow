@@ -155,13 +155,15 @@ jobs:
         ./scripts/k8s_metadata.py
         ./scripts/update-k8s-resources.sh
         
-    # - name: run kube bench    
-    #   id: kube_bench
-    #   uses: steebchen/kubectl@master
-    #   env:
-    #     KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-    #   with:
-    #     args: apply -f kustomize/base/tools/job-eks.yaml
+    - name: run kube bench    
+      id: kube_bench
+      uses: ianbelcher/eks-kubectl-action@master
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_region: ${{ secrets.AWS_REGION }}
+        cluster_name: ${{ secrets.CLUSTER_NAME }}
+        args: get pods -n webapp
 
     - name: Commit files
       id: commit_changes
