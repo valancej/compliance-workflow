@@ -38,20 +38,20 @@ def process_input_results_file(input_file):
         print("Could not find input file")
 
 ###### Processes YAML and builds new report output
-def process_manifest(content, stage, compliance_standard, input_file):
+def create_report(content, stage, compliance_standard, input_file):
    
     results_dict = process_input_results_file(input_file)
 
     current_time = datetime.datetime.now()
     git_sha = os.getenv('GITHUB_SHA')
 
-    manifest_content = content
-    manifest_content["stage"] = stage
-    manifest_content["stage_timestamp"] = current_time.strftime("%c")
-    manifest_content["git_sha"] = git_sha
-    manifest_content["full_image_tag"] = content["image_name"] + ":" + git_sha
-    manifest_content["type"] = 'compliance_check'
-    manifest_content["results"] = results_dict
+    report_content = content
+    report_content["stage"] = stage
+    report_content["stage_timestamp"] = current_time.strftime("%c")
+    report_content["git_sha"] = git_sha
+    report_content["full_image_tag"] = content["image_name"] + ":" + git_sha
+    report_content["type"] = 'compliance_check'
+    report_content["results"] = results_dict
 
     compliance_checks = {}
     compliance_checks["compliance_standard"] = compliance_standard
@@ -65,7 +65,7 @@ def process_manifest(content, stage, compliance_standard, input_file):
            }
         }
        
-       manifest_content.update(compliance_checks)
+       report_content.update(compliance_checks)
     
     elif stage == 'build':
         print('build stage found')
@@ -76,7 +76,7 @@ def process_manifest(content, stage, compliance_standard, input_file):
                 'description': 'Images should be scanned frequently for any vulnerabilities',
             }
         }
-        manifest_content.update(compliance_checks)
+        report_content.update(compliance_checks)
     
     elif stage == 'registry':
         print('registry stage found')
@@ -114,16 +114,16 @@ def process_manifest(content, stage, compliance_standard, input_file):
             }
         }
 
-        manifest_content.update(compliance_checks)
+        report_content.update(compliance_checks)
     
     elif stage == 'deploy':
         print('deploy stage found')
         compliance_checks["tool"] = 'Anchore Enterprise'
 
-        manifest_content.update(compliance_checks)
+        report_content.update(compliance_checks)
 
-    with open("artifacts/"+ stage + "-compliance-manifest.json", "w") as file:
-       json.dump(manifest_content, file)
+    with open("artifacts/"+ stage + "-compliance-report.json", "w") as file:
+       json.dump(report_content, file)
 
 def main(arg_parser):
 
@@ -136,7 +136,7 @@ def main(arg_parser):
             except yaml.YAMLError as exc:
                 print(exc)
     else:
-        print("Could not find hardening manifest file in repository root directory")
+        print("Could not find compliance manifest file in repository root directory")
 
     parser = arg_parser
     args = parser.parse_args()
@@ -145,7 +145,7 @@ def main(arg_parser):
     input_file = args.file
 
     # Process manifest from yaml
-    process_manifest(content, stage, compliance_standard, input_file)
+    create_report(content, stage, compliance_standard, input_file)
     
 if __name__ == "__main__":
     try:

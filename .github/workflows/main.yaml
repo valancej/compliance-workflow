@@ -41,11 +41,11 @@ jobs:
         mkdir -p artifacts
         ./scripts/build_reports.py --stage directory --compliance cis --file ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
     
-    - name: Upload compliance manifest for grype directory scan
+    - name: Upload compliance report for grype directory scan
       uses: actions/upload-artifact@v2
       with:
-        name: directory-compliance-manifest-json
-        path: artifacts/directory-compliance-manifest.json
+        name: directory-compliance-report-json
+        path: artifacts/directory-compliance-report.json
         retention-days: 1
     
     - name: Build image from Dockerfile
@@ -73,11 +73,11 @@ jobs:
       id: compliance_report_image_scan
       run: ./scripts/build_reports.py --stage build --compliance cis --file ${{ steps.scan_image_grype.outputs.vulnerabilities }}
 
-    - name: Upload build manifest for grype image scan
+    - name: Upload build report for grype image scan
       uses: actions/upload-artifact@v2
       with:
-        name: build-compliance-manifest-json
-        path: artifacts/build-compliance-manifest.json
+        name: build-compliance-report-json
+        path: artifacts/build-compliance-report.json
         retention-days: 1
 
     - name: Login to GitHub Container Registry
@@ -111,15 +111,15 @@ jobs:
         path: artifacts/anchore-compliance-report-detail.json
         retention-days: 1
 
-    - name: run build manifest report on anchore registry scan
+    - name: run build report report on anchore registry scan
       id: compliance_report_registry_scan
       run: ./scripts/build_reports.py --stage registry --compliance cis --file artifacts/anchore-compliance-report-detail.json
 
-    - name: Upload build manifest for anchore registry image scan
+    - name: Upload build report for anchore registry image scan
       uses: actions/upload-artifact@v2
       with:
-        name: registry-compliance-manifest-json
-        path: artifacts/registry-compliance-manifest.json
+        name: registry-compliance-report-json
+        path: artifacts/registry-compliance-report.json
         retention-days: 1
 
   deploy:
@@ -135,11 +135,11 @@ jobs:
         repository: 'valancej/compliance-deployment'
         token: ${{ secrets.REPO_PAT }}
 
-    - name: Download compliance manifest from build job
-      id: download_manifest
+    - name: Download compliance report from build job
+      id: download_report
       uses: actions/download-artifact@v2
       with:
-        name: compliance-manifest-yaml
+        name: compliance-report-yaml
 
     - name: Setup Kustomize
       id: setup_kustomize
@@ -163,15 +163,15 @@ jobs:
         git commit -m "Image bump"
         git push
 
-    - name: Build compliance manifest
+    - name: Build compliance report
       id: compliance_report_deploy
       run: ./scripts/build_reports.py --stage deploy --compliance cis
 
-    - name: Upload compliance manifest
+    - name: Upload compliance report
       uses: actions/upload-artifact@v2
       with:
-        name: deploy-compliance-manifest-json
-        path: artifacts/deploy-compliance-manifest.json
+        name: deploy-compliance-report-json
+        path: artifacts/deploy-compliance-report.json
         retention-days: 1
 
   report:
