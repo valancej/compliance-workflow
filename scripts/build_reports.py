@@ -122,7 +122,6 @@ def process_manifest(content, stage, compliance_standard, input_file):
 
         manifest_content.update(compliance_checks)
 
-
     with open("artifacts/"+ stage + "-compliance-manifest.json", "w") as file:
        json.dump(manifest_content, file)
 
