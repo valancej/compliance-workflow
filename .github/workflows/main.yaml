@@ -155,13 +155,13 @@ jobs:
         ./scripts/k8s_metadata.py
         ./scripts/update-k8s-resources.sh
         
-    - name: run kube bench    
-      id: kube_bench
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-      with:
-        args: apply -f kustomize/base/tools/job-eks.yaml
+    # - name: run kube bench    
+    #   id: kube_bench
+    #   uses: steebchen/kubectl@master
+    #   env:
+    #     KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+    #   with:
+    #     args: apply -f kustomize/base/tools/job-eks.yaml
 
     - name: Commit files
       id: commit_changes
@@ -229,6 +229,16 @@ jobs:
     - name: Display structure of downloaded artifacts
       run: ls -R
 
-    # - name: Generate compliance report
-    #   id: generate_compliance_report
-    #   run: generate_reports.py
+    - name: Generate compliance report
+      id: generate_compliance_report
+      run: |
+        chmod +x generate_reports.py
+        ./generate_reports.py --directory artifacts
+
+    - name: upload final report
+      id: upload_final_report
+      uses: actions/upload-artifact@v2
+      with:
+        name: full-compliance-report-json
+        path: full-compliance-report.json
+        retention-days: 1
