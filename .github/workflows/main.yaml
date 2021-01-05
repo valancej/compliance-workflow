@@ -162,6 +162,7 @@ jobs:
         aws_region: ${{ secrets.AWS_REGION }}
         cluster_name: ${{ secrets.CLUSTER_NAME }}
       run: |
+        pip install wheel
         pip install awscli
         ./scripts/kube-bench.sh
 
