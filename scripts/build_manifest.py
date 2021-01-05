@@ -21,6 +21,7 @@ def setup_parser():
     parser = argparse.ArgumentParser(description="Tool for generating compliance reports per CI/CD stage")
     parser.add_argument('-s', '--stage', default='none', help='Pipeline step/stage name. ex. directory, image, registry, deploy')
     parser.add_argument('-c', '--compliance', default='cis', help='compliance check to evaluate. ex. cis')
+    parser.add_argument('-f', '--file', default='vulnerabilities.json', help='path to output results file from previous tool to attach to report. ex. gype vulnerabilities.json')
 
     return parser
 
@@ -38,16 +39,28 @@ def main(arg_parser):
         print("Could not find hardening manifest file in repository root directory")
 
     # Process manifest from yaml
-
     parser = arg_parser
     args = parser.parse_args()
     stage = args.stage
     compliance_standard = args.compliance
+    input_file = args.file
 
-    process_manifest(content, stage, compliance_standard)
+    process_manifest(content, stage, compliance_standard, input_file)
 
-def process_manifest(content, stage, compliance_standard):
+def process_input_results_file(input_file):
+    # Load results file from tool into dict
+    input_file_path = Path(input_file)
+    if input_file_path.exists():
+        with open(input_file_path, 'r') as stream:
+            input_file_dict = json.load(stream)
+            return input_file_dict
+    else:
+        print("Could not find input file")
+
+def process_manifest(content, stage, compliance_standard, input_file):
    
+    results_dict = process_input_results_file(input_file)
+
     current_time = datetime.datetime.now()
     git_sha = os.getenv('GITHUB_SHA')
 
@@ -57,6 +70,8 @@ def process_manifest(content, stage, compliance_standard):
     manifest_content["git_sha"] = git_sha
     manifest_content["full_image_tag"] = content["image_name"] + ":" + git_sha
     manifest_content["type"] = 'compliance_check'
+    manifest_content["results"] = results_dict
+
     compliance_checks = {}
     compliance_checks["compliance_standard"] = compliance_standard
 

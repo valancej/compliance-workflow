@@ -39,7 +39,7 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        ./scripts/build_manifest.py --stage directory --compliance cis
+        ./scripts/build_manifest.py --stage directory --compliance cis --file anchore-reports/vulnerabilities.json
     
     - name: Upload compliance manifest for grype directory scan
       uses: actions/upload-artifact@v2
@@ -71,7 +71,7 @@ jobs:
 
     - name: run report on grype image scan
       id: compliance_report_image_scan
-      run: ./scripts/build_manifest.py --stage build --compliance cis
+      run: ./scripts/build_manifest.py --stage build --compliance cis --file anchore-reports/vulnerabilities.json
 
     - name: Upload build manifest for grype image scan
       uses: actions/upload-artifact@v2
@@ -113,7 +113,7 @@ jobs:
 
     - name: run build manifest report on anchore registry scan
       id: compliance_report_registry_scan
-      run: ./scripts/build_manifest.py --stage registry --compliance cis
+      run: ./scripts/build_manifest.py --stage registry --compliance cis --file artifacts/anchore-compliance-report-detail.json
 
     - name: Upload build manifest for anchore registry image scan
       uses: actions/upload-artifact@v2
