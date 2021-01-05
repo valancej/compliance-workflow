@@ -161,7 +161,7 @@ jobs:
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
       with:
-        args: kubectl apply -f kustomize/base/tools/job-eks.yaml
+        args: apply -f kustomize/base/tools/job-eks.yaml
 
     - name: Commit files
       id: commit_changes
