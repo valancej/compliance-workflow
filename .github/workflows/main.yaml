@@ -163,7 +163,7 @@ jobs:
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_region: ${{ secrets.AWS_REGION }}
         cluster_name: ${{ secrets.CLUSTER_NAME }}
-        args: apply -f kustomize/tools/job-eks.yaml
+        args: apply -f kustomize/base/tools/job-eks.yaml
     
     - name: create kube bench report from logs
       run: |
