@@ -21,6 +21,7 @@ from pathlib import Path
 def setup_parser():
     parser = argparse.ArgumentParser(description="Tool for generating compliance reports per CI/CD stage")
     parser.add_argument('-s', '--stage', default='none', help='Pipeline step/stage name. ex. directory, image, registry, deploy')
+    parser.add_argument('-n', '--number', default='none', type=int, help='Pipeline step/stage number. ex. 1, 2, 3')
     parser.add_argument('-c', '--compliance', default='cis', help='compliance check to evaluate. ex. cis')
     parser.add_argument('-f', '--file', default='vulnerabilities.json', help='path to output results file from previous tool to attach to report. ex. gype vulnerabilities.json')
 
@@ -33,12 +34,13 @@ def process_input_results_file(input_file):
     if input_file_path.exists():
         with open(input_file_path, 'r') as stream:
             input_file_dict = json.load(stream)
+            #print(input_file_dict)
             return input_file_dict
     else:
         print("Could not find input file")
 
 ###### Processes YAML and builds new report output
-def create_report(content, stage, compliance_standard, input_file):
+def create_report(content, stage, stage_number, compliance_standard, input_file):
    
     results_dict = process_input_results_file(input_file)
 
@@ -47,9 +49,10 @@ def create_report(content, stage, compliance_standard, input_file):
 
     report_content = content
     report_content["stage"] = stage
+    report_content["stage_number"] = stage_number
     report_content["stage_timestamp"] = current_time.strftime("%c")
-    report_content["git_sha"] = git_sha
-    report_content["full_image_tag"] = content["image_name"] + ":" + git_sha
+    #report_content["git_sha"] = git_sha
+    #report_content["full_image_tag"] = content["image_name"] + ":" + git_sha
     report_content["type"] = 'compliance_check'
     report_content["results"] = results_dict
 
@@ -141,11 +144,12 @@ def main(arg_parser):
     parser = arg_parser
     args = parser.parse_args()
     stage = args.stage
+    stage_number = args.number
     compliance_standard = args.compliance
     input_file = args.file
 
     # Process manifest from yaml
-    create_report(content, stage, compliance_standard, input_file)
+    create_report(content, stage, stage_number, compliance_standard, input_file)
     
 if __name__ == "__main__":
     try:
