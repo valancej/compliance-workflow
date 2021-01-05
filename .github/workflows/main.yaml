@@ -94,33 +94,33 @@ jobs:
         docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:latest"
         docker push "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
     
-    - name: Scan pushed image with Anchore Enterprise
-      id: anchore_enterprise_scan
-      run: |
-        pip install wheel
-        pip install anchorecli
-        export PATH="$HOME/.local/bin/:$PATH"
-        anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image add "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
-        anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image wait "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
-        anchore-cli --json --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} evaluate check "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}" --detail > artifacts/anchore-compliance-report-detail.json || true
+    # - name: Scan pushed image with Anchore Enterprise
+    #   id: anchore_enterprise_scan
+    #   run: |
+    #     pip install wheel
+    #     pip install anchorecli
+    #     export PATH="$HOME/.local/bin/:$PATH"
+    #     anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image add "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
+    #     anchore-cli --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} image wait "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}"
+    #     anchore-cli --json --url ${{ secrets.ANCHORE_ENDPOINT }} --u ${{ secrets.ANCHORE_USERNAME }} --p ${{ secrets.ANCHORE_PASSWORD }} evaluate check "ghcr.io/${GITHUB_ACTOR}/${IMAGE_NAME}:${GITHUB_SHA}" --detail > artifacts/anchore-compliance-report-detail.json || true
     
-    - name: Upload anchore compliance report
-      uses: actions/upload-artifact@v2
-      with:
-        name: anchore-compliance-report-detail
-        path: artifacts/anchore-compliance-report-detail.json
-        retention-days: 1
+    # - name: Upload anchore compliance report
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: anchore-compliance-report-detail
+    #     path: artifacts/anchore-compliance-report-detail.json
+    #     retention-days: 1
 
-    - name: run build report report on anchore registry scan
-      id: compliance_report_registry_scan
-      run: ./scripts/build_reports.py --stage registry --number 3 --compliance cis --file artifacts/anchore-compliance-report-detail.json
+    # - name: run build report report on anchore registry scan
+    #   id: compliance_report_registry_scan
+    #   run: ./scripts/build_reports.py --stage registry --number 3 --compliance cis --file artifacts/anchore-compliance-report-detail.json
 
-    - name: Upload build report for anchore registry image scan
-      uses: actions/upload-artifact@v2
-      with:
-        name: registry-compliance-report-json
-        path: artifacts/registry-compliance-report.json
-        retention-days: 1
+    # - name: Upload build report for anchore registry image scan
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: registry-compliance-report-json
+    #     path: artifacts/registry-compliance-report.json
+    #     retention-days: 1
 
   deploy:
     name: Deploy
@@ -163,7 +163,12 @@ jobs:
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws_region: ${{ secrets.AWS_REGION }}
         cluster_name: ${{ secrets.CLUSTER_NAME }}
-        args: get pods -n webapp
+        args: apply -f kustomize/tools/job-eks.yaml
+    
+    - name: create kube bench report from logs
+      run: |
+        POD=$(kubectl get pod -l job-name=kube-bench -o jsonpath="{.items[0].metadata.name}")
+        kubectl logs $POD > kube-bench-report.json
 
     - name: Commit files
       id: commit_changes
