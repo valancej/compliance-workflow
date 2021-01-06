@@ -166,6 +166,13 @@ jobs:
         pip install awscli
         ./scripts/kube-bench.sh
 
+    - name: Upload kube bench report
+      uses: actions/upload-artifact@v2
+      with:
+        name: kube-bench-report-json
+        path: artifacts/kube-bench-report.json
+        retention-days: 1
+
     - name: Commit files
       id: commit_changes
       run: |
