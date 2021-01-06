@@ -180,7 +180,7 @@ jobs:
     - name: Upload kube bench compliance report
       uses: actions/upload-artifact@v2
       with:
-        name: kube-bench-report-json
+        name: kube-bench-compliance-report-json
         path: artifacts/kube-bench-compliance-report.json
         retention-days: 1
 
@@ -253,8 +253,6 @@ jobs:
       with:
         name: deploy-compliance-report-json
         path: artifacts
-
-
     
     - name: Display structure of downloaded artifacts
       run: ls -R
