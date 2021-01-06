@@ -23,7 +23,7 @@ def setup_parser():
     parser.add_argument('-s', '--stage', default='none', help='Pipeline step/stage name. ex. directory, image, registry, deploy')
     parser.add_argument('-n', '--number', default='none', type=int, help='Pipeline step/stage number. ex. 1, 2, 3')
     parser.add_argument('-c', '--compliance', default='cis', help='compliance check to evaluate. ex. cis')
-    parser.add_argument('-f', '--file', default='vulnerabilities.json', help='path to output results file from previous tool to attach to report. ex. gype vulnerabilities.json')
+    parser.add_argument('-f', '--file', default='vulnerabilities.json', help='path to output results file from previous tool to attach to report. ex. grype vulnerabilities.json')
 
     return parser
 
@@ -34,7 +34,6 @@ def process_input_results_file(input_file):
     if input_file_path.exists():
         with open(input_file_path, 'r') as stream:
             input_file_dict = json.load(stream)
-            #print(input_file_dict)
             return input_file_dict
     else:
         print("Could not find input file")
@@ -119,11 +118,18 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
 
         report_content.update(compliance_checks)
     
+    elif stage == 'kube-bench':
+        print('kube-bench stage found. looking for kube-bench report')
+        compliance_checks["tool"] = 'kube-bench'
+
+        report_content.update(compliance_checks)
+
     elif stage == 'deploy':
         print('deploy stage found')
         compliance_checks["tool"] = 'Anchore Enterprise'
 
         report_content.update(compliance_checks)
+
 
     with open("artifacts/"+ stage + "-compliance-report.json", "w") as file:
        json.dump(report_content, file)
