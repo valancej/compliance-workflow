@@ -173,9 +173,16 @@ jobs:
         path: artifacts/kube-bench-report.json
         retention-days: 1
     
-    - name: run build report report on anchore registry scan
-      id: compliance_report_registry_scan
+    - name: generate compliance report from kube-bench report
+      id: compliance_report_kube_bench_scan
       run: ./scripts/build_reports.py --stage kube-bench --number 4 --compliance cis --file artifacts/kube-bench-report.json
+
+    - name: Upload kube bench compliance report
+      uses: actions/upload-artifact@v2
+      with:
+        name: kube-bench-report-json
+        path: artifacts/kube-bench-compliance-report.json
+        retention-days: 1
 
     - name: Commit files
       id: commit_changes
@@ -234,10 +241,10 @@ jobs:
         path: artifacts
 
     - name: Download kube-bench artifact
-      id: download_deploy_artifact
+      id: download_kube_bench_artifact
       uses: actions/download-artifact@v2
       with:
-        name: deploy-compliance-report-json
+        name: kube-bench-compliance-report-json
         path: artifacts
     
     - name: Download deploy artifact
