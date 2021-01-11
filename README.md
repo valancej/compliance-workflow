@@ -10,6 +10,7 @@
 ## Deploy job
 
 [Deployment repo](https://github.com/valancej/compliance-deployment)
+[Reports repo](https://github.com/valancej/compliance-reports)
 
 **Requires build job**
 
