@@ -15,6 +15,7 @@ image_name: ghcr.io/valancej/example-node-webapp
 labels:
   anchore.stig.profile1: "redhat-enterprise-linux-7-stig-baseline"
   anchore.stig.profile2: "poc_profile"
+  anchore.cis.profile: "cis"
   org.opencontainers.image.title: "webapp"
   org.opencontainers.image.description: "Example node webapp with stig profiles"
 
