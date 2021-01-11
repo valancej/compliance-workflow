@@ -184,6 +184,17 @@ jobs:
         path: artifacts/kube-bench-compliance-report.json
         retention-days: 1
 
+    - name: generate compliance report from cis-bench script and report
+      id: compliance_report_anchore_cis_bench_scan
+      run: ./scripts/build_reports.py --stage anchore-cis-bench --number 5 --compliance cis --file artifacts/anchore-cis-bench-report.json
+
+    - name: Upload anchore cis bench compliance report
+      uses: actions/upload-artifact@v2
+      with:
+        name: anchore-cis-bench-compliance-report-json
+        path: artifacts/anchore-cis-bench-compliance-report.json
+        retention-days: 1
+
     - name: Commit files
       id: commit_changes
       run: |
@@ -247,11 +258,11 @@ jobs:
         name: kube-bench-compliance-report-json
         path: artifacts
     
-    - name: Download deploy artifact
+    - name: Download anchore-cis-bench artifact
       id: download_deploy_artifact
       uses: actions/download-artifact@v2
       with:
-        name: deploy-compliance-report-json
+        name: anchore-cis-bench-compliance-report-json
         path: artifacts
     
     - name: Display structure of downloaded artifacts

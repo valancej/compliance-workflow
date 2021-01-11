@@ -124,9 +124,9 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
 
         report_content.update(compliance_checks)
 
-    elif stage == 'deploy':
+    elif stage == 'anchore-cis-bench':
         print('deploy stage found')
-        compliance_checks["tool"] = 'Anchore Enterprise'
+        compliance_checks["tool"] = 'anchore-cis-script'
 
         report_content.update(compliance_checks)
 
