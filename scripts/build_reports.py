@@ -80,7 +80,7 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
     elif stage == 'registry':
         print('registry stage found')
         report_content["tool"]["name"] = 'anchore-enterprise'
-        report_content["compliance"]["sections"].append({
+        report_content["compliance"]["sections"] = [
             {
                 'description': 'Ensure a container for the user has been created',
                 'name': '4.1'
@@ -121,7 +121,7 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
                 'description': 'Ensure only necessary ports are open',
                 'name': '5.8'
             }
-        })
+        ]
     
     elif stage == 'k8s':
         print('kube-bench stage found. looking for kube-bench report')
