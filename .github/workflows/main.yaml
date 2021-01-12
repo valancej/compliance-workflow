@@ -270,16 +270,16 @@ jobs:
     - name: Display structure of downloaded artifacts
       run: ls -R
 
-    # - name: Generate compliance report
-    #   id: generate_compliance_report
-    #   run: |
-    #     chmod +x generate_reports.py
-    #     ./generate_reports.py --directory artifacts
+    - name: Generate compliance report
+      id: generate_compliance_report
+      run: |
+        chmod +x runit.sh
+        ./runit.sh
 
-    # - name: upload final report
-    #   id: upload_final_report
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: full-compliance-report-json
-    #     path: full-compliance-report.json
-    #     retention-days: 1
+    - name: upload final report
+      id: upload_final_report
+      uses: actions/upload-artifact@v2
+      with:
+        name: final_report.json
+        path: final_report.json
+        retention-days: 1

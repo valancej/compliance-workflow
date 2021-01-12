@@ -64,8 +64,7 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
        print("source stage found")
        report_content["tool"]["name"] = 'anchore-grype'
        report_content["compliance"]["sections"].append({
-           'description': 'Images should be scanned frequently for any vulnerabilities',
-           'name': '4.4'
+           'description': 'Images should be scanned frequently for any vulnerabilities', 'name': '4.4'
         })
            
     elif stage == 'build':
@@ -126,10 +125,198 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
     elif stage == 'k8s':
         print('kube-bench stage found. looking for kube-bench report')
         report_content["tool"]["name"] = 'kube-bench'
+        report_content["compliance"]["sections"] = [
+            {
+                'description': "Ensure that the proxy kubeconfig file permissions are set to 644 or more restrictive",
+                'name': '3.1.1'
+            },
+            {
+                'description': "Ensure that the proxy kubeconfig file ownership is set to root:root",
+                'name': '3.1.2'
+            },
+            {
+                'description': "Ensure that the kubelet configuration file has permissions set to 644 or more restrictive",
+                'name': '3.1.3'
+            },
+            {
+                'description': "Ensure that the kubelet configuration file ownership is set to root:root ",
+                'name': '3.1.4'
+            },            
+            {
+                'description': "Ensure that the --anonymous-auth argument is set to false",
+                'name': '3.2.1'
+            },
+            {
+                'description': "Ensure that the --authorization-mode argument is not set to AlwaysAllow",
+                'name': '3.2.2'
+            },
+            {
+                'description': "Ensure that the --client-ca-file argument is set as appropriate",
+                'name': '3.2.3'
+            },
+            {
+                'description': "Ensure that the --read-only-port argument is set to 0",
+                'name': '3.2.4'
+            },
+            {
+                'description': "Ensure that the --streaming-connection-idle-timeout argument is not set to 0",
+                'name': '3.2.5'
+            },
+            {
+                'description': "Ensure that the --protect-kernel-defaults argument is set to true",
+                'name': '3.2.6'
+            },
+            {
+                'description': "Ensure that the --make-iptables-util-chains argument is set to true",
+                'name': '3.2.7'
+            },
+            {
+                'description': "Ensure that the --hostname-override argument is not set",
+                'name': '3.2.8'
+            },
+            {
+                'description': "Ensure that the --event-qps argument is set to 0 or a level which ensures appropriate event capture",
+                'name': '3.2.9'
+            },
+            {
+                'description': "Ensure that the --rotate-certificates argument is not set to false",
+                'name': '3.2.10'
+            },
+            {
+                'description': "Ensure that the RotateKubeletServerCertificate argument is set to true",
+                'name': '3.2.11'
+            }
+        ]
 
     elif stage == 'deploy':
         print('deploy stage found')
         report_content["tool"]["name"] = 'anchore-cis-bench'
+        report_content["compliance"]["sections"] = [
+            {
+                'description': "Ensure that, if applicable, an AppArmor Profile is enabled",
+                'name': '5.1'
+            },
+            {
+                'description': "Ensure that, if applicable, SELinux security options are set",
+                'name': '5.2'
+            },
+            {
+                'description': "Ensure that Linux kernel capabilities are restricted within containers",
+                'name': '5.3'
+            },
+            {
+                'description': "Ensure that privileged containers are not used",
+                'name': '5.4'
+            },            
+            {
+                'description': " Ensure sensitive host system directories are not mounted on containers ",
+                'name': '5.5'
+            },
+            {
+                'description': "Ensure sshd is not run within containers",
+                'name': '5.6'
+            },
+            {
+                'description': "Ensure privileged ports are not mapped within containers",
+                'name': '5.7'
+            },
+            {
+                'description': "Ensure that only needed ports are open on the container",
+                'name': '5.8'
+            },
+            {
+                'description': "Ensure that the host's network namespace is not shared",
+                'name': '5.9'
+            },
+            {
+                'description': "Ensure that the memory usage for containers is limited",
+                'name': '5.10'
+            },
+                        {
+                'description': "Ensure that CPU priority is set appropriately on containers",
+                'name': '5.11'
+            },
+            {
+                'description': "Ensure that the container's root filesystem is mounted as read only",
+                'name': '5.12'
+            },
+            {
+                'description': "Ensure that incoming container traffic is bound to a specific host interface",
+                'name': '5.13'
+            },
+            {
+                'description': "Ensure that the 'on-failure' container restart policy is set to 5",
+                'name': '5.14'
+            },            
+            {
+                'description': "Ensure that the host's process namespace is not shared",
+                'name': '5.15'
+            },
+            {
+                'description': "Ensure that the host's IPC namespace is not shared",
+                'name': '5.16'
+            },
+            {
+                'description': "Ensure that host devices are not directly exposed to containers ",
+                'name': '5.17'
+            },
+            {
+                'description': " Ensure that the default ulimit is overwritten at runtime if needed",
+                'name': '5.18'
+            },
+            {
+                'description': "Ensure mount propagation mode is not set to shared ",
+                'name': '5.19'
+            },
+            {
+                'description': "Ensure that the host's UTS namespace is not shared",
+                'name': '5.20'
+            },
+                        {
+                'description': "Ensure the default seccomp profile is not Disabled",
+                'name': '5.21'
+            },
+            {
+                'description': "Ensure that docker exec commands are not used with the privileged option",
+                'name': '5.22'
+            },
+            {
+                'description': "Ensure that docker exec commands are not used with theuser=root option",
+                'name': '5.23'
+            },
+            {
+                'description': "Ensure that cgroup usage is confirmed",
+                'name': '5.24'
+            },            
+            {
+                'description': "Ensure that the container is restricted from acquiring additional privileges",
+                'name': '5.25'
+            },
+            {
+                'description': "Ensure that container health is checked at runtime",
+                'name': '5.26'
+            },
+            {
+                'description': "Ensure that Docker commands always make use of the latest version of their image",
+                'name': '5.27'
+            },
+            {
+                'description': 'Ensure that the PIDs cgroup limit is used',
+                'name': '5.28'
+            },
+            {
+                'description': "Ensure that Docker's default bridge docker0 is not used",
+                'name': '5.29'
+            },
+            {
+                'description': "Ensure that the host's user namespaces are not shared",
+                'name': '5.30'
+            },
+                        {
+                'description': 'Ensure that the Docker socket is not mounted inside any containers',
+                'name': '5.31'
+            }
+        ]
 
     with open("stage_outputs/"+ stage + ".json", "w") as file:
        json.dump(report_content, file)
