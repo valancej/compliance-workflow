@@ -39,13 +39,14 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
-        ./scripts/build_reports.py --stage directory --number 1 --compliance cis --file ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
+        mkdir -p stage_outputs
+        ./scripts/build_reports.py --stage source --number 1 --compliance cis --file ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
     
     - name: Upload compliance report for grype directory scan
       uses: actions/upload-artifact@v2
       with:
         name: directory-compliance-report-json
-        path: artifacts/directory-compliance-report.json
+        path: stage_outputs/source.json
         retention-days: 1
     
     - name: Build image from Dockerfile
@@ -77,7 +78,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build-compliance-report-json
-        path: artifacts/build-compliance-report.json
+        path: stage_outputs/build.json
         retention-days: 1
 
     - name: Login to GitHub Container Registry
@@ -119,7 +120,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: registry-compliance-report-json
-        path: artifacts/registry-compliance-report.json
+        path: stage_outputs/registry.json
         retention-days: 1
 
   deploy:
@@ -152,6 +153,7 @@ jobs:
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
+        mkdir -p stage_outputs
         ./scripts/k8s_metadata.py
         ./scripts/update-k8s-resources.sh
     
@@ -175,24 +177,24 @@ jobs:
     
     - name: generate compliance report from kube-bench report
       id: compliance_report_kube_bench_scan
-      run: ./scripts/build_reports.py --stage kube-bench --number 4 --compliance cis --file artifacts/kube-bench-report.json
+      run: ./scripts/build_reports.py --stage k8s --number 4 --compliance cis --file artifacts/kube-bench-report.json
 
     - name: Upload kube bench compliance report
       uses: actions/upload-artifact@v2
       with:
         name: kube-bench-compliance-report-json
-        path: artifacts/kube-bench-compliance-report.json
+        path: stage_outputs/k8s.json
         retention-days: 1
 
     - name: generate compliance report from cis-bench script and report
       id: compliance_report_anchore_cis_bench_scan
-      run: ./scripts/build_reports.py --stage anchore-cis-bench --number 5 --compliance cis --file artifacts/anchore-cis-bench-report.json
+      run: ./scripts/build_reports.py --stage deploy --number 5 --compliance cis --file artifacts/anchore-cis-bench-report.json
 
     - name: Upload anchore cis bench compliance report
       uses: actions/upload-artifact@v2
       with:
         name: anchore-cis-bench-compliance-report-json
-        path: artifacts/anchore-cis-bench-compliance-report.json
+        path: stage_outputs/deploy.json
         retention-days: 1
 
     - name: Commit files
@@ -203,16 +205,16 @@ jobs:
         git commit -m "Image bump"
         git push
 
-    - name: Build compliance report
-      id: compliance_report_deploy
-      run: ./scripts/build_reports.py --stage deploy --number 5 --compliance cis
+    # - name: Build compliance report
+    #   id: compliance_report_deploy
+    #   run: ./scripts/build_reports.py --stage deploy --number 5 --compliance cis
 
-    - name: Upload compliance report
-      uses: actions/upload-artifact@v2
-      with:
-        name: deploy-compliance-report-json
-        path: artifacts/deploy-compliance-report.json
-        retention-days: 1
+    # - name: Upload compliance report
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: deploy-compliance-report-json
+    #     path: artifacts/deploy-compliance-report.json
+    #     retention-days: 1
 
   report:
     name: Report
@@ -228,56 +230,56 @@ jobs:
         token: ${{ secrets.REPO_PAT }}
     
     - name: Create artifacts directory
-      run: mkdir -p artifacts
+      run: mkdir -p stage_outputs
     
     - name: Download directory artifact
       id: download_directory_artifact
       uses: actions/download-artifact@v2
       with:
         name: directory-compliance-report-json
-        path: artifacts
+        path: stage_outputs
 
     - name: Download build artifact
       id: download_build_artifact
       uses: actions/download-artifact@v2
       with:
         name: build-compliance-report-json
-        path: artifacts
+        path: stage_outputs
     
     - name: Download registry artifact
       id: download_registry_artifact
       uses: actions/download-artifact@v2
       with:
         name: registry-compliance-report-json
-        path: artifacts
+        path: stage_outputs
 
     - name: Download kube-bench artifact
       id: download_kube_bench_artifact
       uses: actions/download-artifact@v2
       with:
         name: kube-bench-compliance-report-json
-        path: artifacts
+        path: stage_outputs
     
     - name: Download anchore-cis-bench artifact
       id: download_deploy_artifact
       uses: actions/download-artifact@v2
       with:
         name: anchore-cis-bench-compliance-report-json
-        path: artifacts
+        path: stage_outputs
     
     - name: Display structure of downloaded artifacts
       run: ls -R
 
-    - name: Generate compliance report
-      id: generate_compliance_report
-      run: |
-        chmod +x generate_reports.py
-        ./generate_reports.py --directory artifacts
+    # - name: Generate compliance report
+    #   id: generate_compliance_report
+    #   run: |
+    #     chmod +x generate_reports.py
+    #     ./generate_reports.py --directory artifacts
 
-    - name: upload final report
-      id: upload_final_report
-      uses: actions/upload-artifact@v2
-      with:
-        name: full-compliance-report-json
-        path: full-compliance-report.json
-        retention-days: 1
+    # - name: upload final report
+    #   id: upload_final_report
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: full-compliance-report-json
+    #     path: full-compliance-report.json
+    #     retention-days: 1

@@ -46,92 +46,92 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
     current_time = datetime.datetime.now()
     git_sha = os.getenv('GITHUB_SHA')
 
-    report_content = content
-    report_content["stage"] = stage
-    report_content["stage_number"] = stage_number
-    report_content["stage_timestamp"] = current_time.strftime("%c")
-    report_content["git_sha"] = git_sha
-    report_content["full_image_tag"] = content["image_name"] + ":" + git_sha
-    report_content["type"] = 'compliance_check'
-    report_content["results"] = results_dict
+    report_content = {
+        "timestamp": current_time.strftime("%c"),
+        "stage": stage,
+        "stage_number": stage_number,
+        "git_sha": git_sha,
+        "tool": {},
+        "compliance": {
+            "name": compliance_standard,
+            "sections": []
+        },
+        "tool_result_data": results_dict,
+        "manifest_info": content
+    }
 
-    compliance_checks = {}
-    compliance_checks["compliance_standard"] = compliance_standard
-
-    if stage == 'directory':
-       print("directory stage found")
-       compliance_checks["tool"] = 'Grype'
-       compliance_checks["compliance_sections"] = {
-           '4.4': {
-               'description': 'Images should be scanned frequently for any vulnerabilities',
-           }
-        }
-       
-       report_content.update(compliance_checks)
-    
+    if stage == 'source':
+       print("source stage found")
+       report_content["tool"]["name"] = 'anchore-grype'
+       report_content["compliance"]["sections"].append({
+           'description': 'Images should be scanned frequently for any vulnerabilities',
+           'name': '4.4'
+        })
+           
     elif stage == 'build':
         print('build stage found')
         # Could also be anchore enterprise scan
-        compliance_checks["tool"] = 'Grype'
-        compliance_checks["compliance_sections"] = {
-            '4.4': {
-                'description': 'Images should be scanned frequently for any vulnerabilities',
-            }
-        }
-        report_content.update(compliance_checks)
+        report_content["tool"]["name"] = 'anchore-grype'
+        report_content["compliance"]["sections"].append({
+           'description': 'Images should be scanned frequently for any vulnerabilities',
+           'name': '4.4'
+        })
     
     elif stage == 'registry':
         print('registry stage found')
-        compliance_checks["tool"] = 'Anchore Enterprise'
-        compliance_checks["compliance_sections"] = {
-            '4.1': {
+        report_content["tool"]["name"] = 'anchore-enterprise'
+        report_content["compliance"]["sections"].append({
+            {
                 'description': 'Ensure a container for the user has been created',
+                'name': '4.1'
             },
-            '4.2': {
+            {
                 'description': 'Ensure containers use trusted base images',
+                'name': '4.2'
             },
-            '4.3': {
+            {
                 'description': 'Ensure that unnecessary packages are not installed in the container',
+                'name': '4.3'
             },
-            '4.4': {
+            {
                 'description': 'Images should be scanned frequently for any vulnerabilities',
+                'name': '4.5'
             },            
-            '4.6': {
+            {
                 'description': 'Ensure HEALTHCHECK instructions have been added',
+                'name': '4.6'
             },
-            '4.7': {
+            {
                 'description': 'Ensure update instructions are not used alone in the Dockerfile',
+                'name': '4.7'
             },
-            '4.8': {
+            {
                 'description': 'Ensure setuid and setgid permissions are removed',
+                'name': '4.8'
             },
-            '4.9': {
+            {
                 'description': 'Ensure that COPY is used instead of ADD',
+                'name': '4.9'
             },
-            '4.10': {
+            {
                 'description': 'Ensure secrets are not stored',
+                'name': '4.10'
             },
-            '5.8': {
+            {
                 'description': 'Ensure only necessary ports are open',
+                'name': '5.8'
             }
-        }
-
-        report_content.update(compliance_checks)
+        })
     
-    elif stage == 'kube-bench':
+    elif stage == 'k8s':
         print('kube-bench stage found. looking for kube-bench report')
-        compliance_checks["tool"] = 'kube-bench'
+        report_content["tool"]["name"] = 'kube-bench'
 
-        report_content.update(compliance_checks)
-
-    elif stage == 'anchore-cis-bench':
+    elif stage == 'deploy':
         print('deploy stage found')
-        compliance_checks["tool"] = 'anchore-cis-script'
+        report_content["tool"]["name"] = 'anchore-cis-bench'
 
-        report_content.update(compliance_checks)
-
-
-    with open("artifacts/"+ stage + "-compliance-report.json", "w") as file:
+    with open("stage_outputs/"+ stage + ".json", "w") as file:
        json.dump(report_content, file)
 
 def main(arg_parser):
