@@ -273,7 +273,7 @@ jobs:
     - name: Generate compliance report
       id: generate_compliance_report
       run: |
-        pip install prettytable
+        pip3 install prettytable
         chmod +x runit.sh
         ./runit.sh
 
