@@ -3,7 +3,7 @@
 
 name: github.com/valancej/compliance-workflow
 image_name: ghcr.io/valancej/example-node-webapp
-
+k8s_cis_benchmark: eks
 # Images will also be tagged with git sha
 
 # Image labels which will be added to the image during build time
