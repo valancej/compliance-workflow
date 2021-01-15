@@ -193,6 +193,82 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
         report_content["tool"]["name"] = 'anchore-cis-bench'
         report_content["compliance"]["sections"] = [
             {
+                "description": "Host configuration",
+                "name": "1.1.1-1.2.12"
+            },
+            {
+                "description": "Ensure network traffic is restricted between containers on the default bridge",
+                "name": "2.1"
+            },
+            {
+                "description": "Ensure the logging level is set to 'info'",
+                "name": "2.2"
+            },
+            {
+                "description": "Ensure Docker is allowed to make changes to iptables",
+                "name": "2.3"
+            },
+            {
+                "description": "Ensure insecure registries are not used",
+                "name": "2.4"
+            },
+            {
+                "description": "Ensure aufs storage driver is not used",
+                "name": "2.5"
+            },
+            {
+                "description": "Ensure TLS authentication for Docker daemon is configured",
+                "name": "2.6"
+            },
+            {
+                "description": "Ensure the default ulimit is configured appropriately",
+                "name": "2.7"
+            },
+            {
+                "description": "Enable user namespace support",
+                "name": "2.8"
+            },
+            {
+                "description": "Ensure the default cgroup usage has been confirmed",
+                "name": "2.9"
+            },
+            {
+                "description": "Ensure base device size is not changed until needed",
+                "name": "2.10"
+            },
+            {
+                "description": "Ensure that authorization for Docker client commands is enabled",
+                "name": "2.11"
+            },
+            {
+                "description": "Ensure centralized and remote logging is configured",
+                "name": "2.12"
+            },
+            {
+                "description": "Ensure live restore is enabled",
+                "name": "2.13"
+            },
+            {
+                "description": "Ensure Userland Proxy is Disabled",
+                "name": "2.14"
+            },
+            {
+                "description": "Ensure that a daemon-wide custom seccomp profile is applied if appropriate",
+                "name": "2.15"
+            },
+            {
+                "description": "Ensure that experimental features are not implemented in production",
+                "name": "2.16"
+            },
+            {
+                "description": "Ensure containers are restricted from acquiring new privileges",
+                "name": "2.17"
+            },
+            {
+                "description": "Docker daemon configuration files",
+                "name": "3.1-3.22"
+            },
+            {
                 'description': "Ensure that, if applicable, an AppArmor Profile is enabled",
                 'name': '5.1'
             },
@@ -209,7 +285,7 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
                 'name': '5.4'
             },            
             {
-                'description': " Ensure sensitive host system directories are not mounted on containers ",
+                'description': "Ensure sensitive host system directories are not mounted on containers ",
                 'name': '5.5'
             },
             {
@@ -261,7 +337,7 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
                 'name': '5.17'
             },
             {
-                'description': " Ensure that the default ulimit is overwritten at runtime if needed",
+                'description': "Ensure that the default ulimit is overwritten at runtime if needed",
                 'name': '5.18'
             },
             {
@@ -312,9 +388,17 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
                 'description': "Ensure that the host's user namespaces are not shared",
                 'name': '5.30'
             },
-                        {
+            {
                 'description': 'Ensure that the Docker socket is not mounted inside any containers',
                 'name': '5.31'
+            },
+            {
+                'description': 'Ensure that image sprawl is avoided',
+                'name': '6.1'
+            },
+            {
+                'description': 'Ensure that container sprawl is avoided',
+                'name': '6.2'
             }
         ]
 

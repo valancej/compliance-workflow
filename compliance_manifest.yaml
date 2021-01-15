@@ -1,7 +1,7 @@
 ---
 # The name of the git repository. Ex. valancej/compliance-workflow
 
-name: valancej/compliance-workflow
+name: github.com/valancej/compliance-workflow
 image_name: ghcr.io/valancej/example-node-webapp
 
 # Images will also be tagged with git sha
