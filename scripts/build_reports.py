@@ -127,6 +127,14 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
         report_content["tool"]["name"] = 'kube-bench'
         report_content["compliance"]["sections"] = [
             {
+                'description': "Control Plane Components",
+                'name': '1'
+            },
+            {
+                'description': "Control Plane Configuration",
+                'name': '2'
+            },
+            {
                 'description': "Ensure that the proxy kubeconfig file permissions are set to 644 or more restrictive",
                 'name': '3.1.1'
             },
