@@ -1,16 +1,16 @@
-FROM mhart/alpine-node:12 
+FROM node:10 AS build-env
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json server.js ./
 
 RUN npm install
 
-FROM mhart/alpine-node:slim-12
+FROM gcr.io/distroless/nodejs:10
 
-WORKDIR /usr/src/app
+COPY --from=build-env /app /app
 
-COPY . .
+WORKDIR /app
 
 EXPOSE 8080
-CMD [ "node", "server.js" ]
+CMD [ "server.js" ]
