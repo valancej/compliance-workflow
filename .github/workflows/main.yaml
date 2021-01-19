@@ -146,7 +146,7 @@ jobs:
       id: setup_kustomize
       uses: imranismail/setup-kustomize@v1
       with:
-        kustomize-version: "3.6.1"
+        kustomize-version: "3.x"
 
     - name: Update Kubernetes resources
       id: update_k8s
