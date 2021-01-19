@@ -1,6 +1,6 @@
-FROM registry.access.redhat.com/ubi8:8.3 
+FROM registry.access.redhat.com/ubi8/ubi-minimal 
 
-RUN yum -y install nodejs
+RUN microdnf install nodejs && microdnf clean all
 
 WORKDIR /usr/src/app
 
