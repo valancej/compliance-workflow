@@ -1,6 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal 
-
-RUN microdnf install nodejs && microdnf clean all
+FROM mhart/alpine-node:12 
 
 WORKDIR /usr/src/app
 
