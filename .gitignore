@@ -4,4 +4,4 @@ stage_outputs
 old-scripts
 vulnerabilities.json
 anchore-compliance-report-detail.json
-vulns
+
