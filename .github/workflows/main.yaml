@@ -34,8 +34,8 @@ jobs:
         path: artifacts/opa-cis-dockerfile-results.json
         retention-days: 1
     
-    - name: run report on grype directory scan
-      id: compliance_report_directory_scan
+    - name: run report on dockerfile results
+      id: compliance_report_dockerfile_scan
       run: |
         chmod +x scripts/*
         mkdir -p artifacts
