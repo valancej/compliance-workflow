@@ -1,0 +1,25 @@
+[
+	{
+		"filename": "../Dockerfile",
+		"successes": 6,
+		"warnings": [
+			{
+				"msg": "4.3 Ensure unnecessary packages are not installed in the container (Not Scored) level 1"
+			},
+			{
+				"msg": "4.4 Ensure images are scanned and rebuilt to include security patches (Not Scored) level 1"
+			},
+			{
+				"msg": "4.10 Ensure secrets are not stored in Dockerfiles (Not Scored) level 1"
+			}
+		],
+		"failures": [
+			{
+				"msg": "4.1 Ensure a user for the container has been created (Scored) level 1"
+			},
+			{
+				"msg": "4.6 Ensure HEALTHCHECK instructions have been added to the container image (Scored) level 1"
+			}
+		]
+	}
+]
