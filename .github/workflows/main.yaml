@@ -18,6 +18,24 @@ jobs:
         name: compliance-manifest-yaml
         path: compliance_manifest.yaml
         retention-days: 1
+    
+    - name: Scan current project Dockerfile with Conftest
+      id: scan_dockerfile
+      run: |
+        wget https://github.com/open-policy-agent/conftest/releases/download/v0.21.0/conftest_0.21.0_Linux_x86_64.tar.gz
+        tar xzf conftest_0.21.0_Linux_x86_64.tar.gz
+        sudo mv conftest /usr/local/bin
+        mkdir -p artifacts
+        cd opa-dockerfile-benchmarks
+        conftest test ../Dockerfile --data test/.opacisrc --output=json > ../artifacts/opa-cis-dockerfile-results.json
+        cd ../
+
+    - name: upload conftest opa results
+      uses: actions/upload-artifact@v2
+      with:
+        name: dockerfile-conftest-report
+        path: artifacts/opa-cis-dockerfile-results.json
+        retention-days: 1
 
     - name: Scan current project directory with Grype
       id: scan_directory_grype
