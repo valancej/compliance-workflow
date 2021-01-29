@@ -24,7 +24,7 @@ jobs:
       run: |
         mkdir -p artifacts
         cd opa-dockerfile-benchmarks
-        ./conftest test ../Dockerfile --data test/.opacisrc --output=json > ../artifacts/opa-cis-dockerfile-results.json
+        ./conftest test ../Dockerfile --data test/.opacisrc --output=json > ../artifacts/opa-cis-dockerfile-results.json || true
         cd ../
 
     - name: upload conftest opa results
