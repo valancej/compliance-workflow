@@ -24,6 +24,7 @@ def setup_parser():
     parser.add_argument('-n', '--number', default='none', type=int, help='Pipeline step/stage number. ex. 1, 2, 3')
     parser.add_argument('-c', '--compliance', default='cis', help='compliance check to evaluate. ex. cis')
     parser.add_argument('-f', '--file', default='vulnerabilities.json', help='path to output results file from previous tool to attach to report. ex. grype vulnerabilities.json')
+    parser.add_argument('-t', '--tool', help='tool used to generate results. ex. anchore-grype')
 
     return parser
 
@@ -39,7 +40,7 @@ def process_input_results_file(input_file):
         print("Could not find input file")
 
 ###### Processes YAML and builds new report output
-def create_report(content, stage, stage_number, compliance_standard, input_file):
+def create_report(content, stage, stage_number, compliance_standard, input_file, tool):
    
     results_dict = process_input_results_file(input_file)
 
@@ -62,7 +63,7 @@ def create_report(content, stage, stage_number, compliance_standard, input_file)
 
     if stage == 'source':
        print("source stage found")
-       report_content["tool"]["name"] = 'anchore-grype'
+       report_content["tool"]["name"] = tool
        report_content["compliance"]["sections"].append({
            'description': 'Images should be scanned frequently for any vulnerabilities', 'name': '4.4'
         })
@@ -432,9 +433,10 @@ def main(arg_parser):
     stage_number = args.number
     compliance_standard = args.compliance
     input_file = args.file
+    tool = args.tool
 
     # Process manifest from yaml
-    create_report(content, stage, stage_number, compliance_standard, input_file)
+    create_report(content, stage, stage_number, compliance_standard, input_file, tool)
     
 if __name__ == "__main__":
     try:

@@ -33,6 +33,14 @@ jobs:
         name: dockerfile-conftest-report
         path: artifacts/opa-cis-dockerfile-results.json
         retention-days: 1
+    
+    - name: run report on grype directory scan
+      id: compliance_report_directory_scan
+      run: |
+        chmod +x scripts/*
+        mkdir -p artifacts
+        mkdir -p stage_outputs
+        ./scripts/build_reports.py --stage source --number 1 --compliance cis --file artifacts/opa-cis-dockerfile-results.json --tool opa-conftest
 
     - name: Scan current project directory with Grype
       id: scan_directory_grype
@@ -55,7 +63,7 @@ jobs:
         chmod +x scripts/*
         mkdir -p artifacts
         mkdir -p stage_outputs
-        ./scripts/build_reports.py --stage source --number 1 --compliance cis --file ${{ steps.scan_directory_grype.outputs.vulnerabilities }}
+        ./scripts/build_reports.py --stage source --number 2 --compliance cis --file ${{ steps.scan_directory_grype.outputs.vulnerabilities }} --tool anchore-grype
     
     - name: Upload compliance report for grype directory scan
       uses: actions/upload-artifact@v2
@@ -87,7 +95,7 @@ jobs:
 
     - name: run report on grype image scan
       id: compliance_report_image_scan
-      run: ./scripts/build_reports.py --stage build --number 2 --compliance cis --file ${{ steps.scan_image_grype.outputs.vulnerabilities }}
+      run: ./scripts/build_reports.py --stage build --number 3 --compliance cis --file ${{ steps.scan_image_grype.outputs.vulnerabilities }}
 
     - name: Upload build report for grype image scan
       uses: actions/upload-artifact@v2
@@ -129,7 +137,7 @@ jobs:
 
     - name: run build report report on anchore registry scan
       id: compliance_report_registry_scan
-      run: ./scripts/build_reports.py --stage registry --number 3 --compliance cis --file artifacts/anchore-compliance-report-detail.json
+      run: ./scripts/build_reports.py --stage registry --number 4 --compliance cis --file artifacts/anchore-compliance-report-detail.json
 
     - name: Upload build report for anchore registry image scan
       uses: actions/upload-artifact@v2
@@ -192,7 +200,7 @@ jobs:
     
     - name: generate compliance report from kube-bench report
       id: compliance_report_kube_bench_scan
-      run: ./scripts/build_reports.py --stage k8s --number 4 --compliance cis --file artifacts/kube-bench-report.json
+      run: ./scripts/build_reports.py --stage k8s --number 5 --compliance cis --file artifacts/kube-bench-report.json
 
     - name: Upload kube bench compliance report
       uses: actions/upload-artifact@v2
@@ -203,7 +211,7 @@ jobs:
 
     - name: generate compliance report from cis-bench script and report
       id: compliance_report_anchore_cis_bench_scan
-      run: ./scripts/build_reports.py --stage deploy --number 5 --compliance cis --file artifacts/anchore-cis-bench-report.json
+      run: ./scripts/build_reports.py --stage deploy --number 6 --compliance cis --file artifacts/anchore-cis-bench-report.json
 
     - name: Upload anchore cis bench compliance report
       uses: actions/upload-artifact@v2
